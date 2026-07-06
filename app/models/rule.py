@@ -17,7 +17,9 @@ if TYPE_CHECKING:
 
 class Rule(Base, TimestampMixin):
     __tablename__ = "rules"
-    __table_args__ = (Index("ix_rules_user_priority", "user_id", "priority", "is_active"),)
+    __table_args__ = (
+        Index("ix_rules_user_priority", "user_id", "priority", "is_active"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(
@@ -39,6 +41,7 @@ class Rule(Base, TimestampMixin):
     reply_file_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
     reply_metadata: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
 
+    # Random reply array of {type, text, file_id, ...}
     random_replies: Mapped[list | None] = mapped_column(JSONB, nullable=True)
 
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
