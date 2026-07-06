@@ -26,7 +26,7 @@ class PromoCode(Base, TimestampMixin):
     discount_amount: Mapped[float] = mapped_column(default=0.0, nullable=False)
     bonus_days: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
 
-    max_uses: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    max_uses: Mapped[int] = mapped_column(Integer, default=0, nullable=False)  # 0 = unlimited
     used_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     max_per_user: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
 
