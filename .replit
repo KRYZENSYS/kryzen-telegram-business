@@ -1,0 +1,26 @@
+run = "python main.py"
+entrypoint = "main.py"
+
+[nix]
+channel = "stable-23_11"
+
+[env]
+PYTHON_VERSION = "3.12"
+PYTHONUNBUFFERED = "1"
+PIP_NO_CACHE_DIR = "1"
+APP_PORT = "8080"
+APP_HOST = "0.0.0.0"
+
+[deployment]
+run = ["python", "main.py"]
+deploymentTarget = "cloudrun"
+
+[[ports]]
+localPort = 8080
+externalPort = 80
+
+[unitTest]
+language = "python3"
+
+[languages.python3]
+pattern = "**/*.py"
