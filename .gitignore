@@ -3,8 +3,9 @@ __pycache__/
 *.pyo
 .venv/
 venv/
-.env
 *.db
+*.sqlite
+*.sqlite3
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
@@ -13,3 +14,11 @@ node_modules/
 dist/
 build/
 *.egg-info/
+
+# Replit
+.replit.bak
+.upm/
+.config/
+
+# Secrets (never commit)
+.env
