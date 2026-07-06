@@ -1,0 +1,26 @@
+[project]
+name = "kryzen-telegram-business"
+version = "1.0.0"
+description = "Production-ready Telegram Business Platform with Auto Reply, AI, Archive and Mini App"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "KRYZENSYS" }]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+extend-exclude = [".venv", "build", "dist"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "N", "SIM", "RUF"]
+ignore = ["E501", "B008"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
