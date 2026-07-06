@@ -22,7 +22,7 @@ class AIHistory(Base):
     chat_id: Mapped[int] = mapped_column(
         ForeignKey("chats.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    role: Mapped[str] = mapped_column(String(16), nullable=False)
+    role: Mapped[str] = mapped_column(String(16), nullable=False)  # system/user/assistant
     content: Mapped[str] = mapped_column(Text, nullable=False)
 
     model: Mapped[str | None] = mapped_column(String(64), nullable=True)
