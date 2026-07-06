@@ -1,61 +1,23 @@
-"""Promo code repository."""
 from __future__ import annotations
-
-from datetime import datetime
-from typing import Sequence
-
-from sqlalchemy import func, select, update
-
-from app.models.promocode import PromoCode, PromoCodeRedemption
+from sqlalchemy import func, select
+from app.models.promocode import PromoCode, PromoRedemption
 from app.repositories.base import BaseRepository
-
 
 class PromoCodeRepository(BaseRepository[PromoCode]):
     model = PromoCode
-
     async def get_by_code(self, code: str) -> PromoCode | None:
-        return await self.get_by(code=code.upper())
-
-    async def list_active(self) -> Sequence[PromoCode]:
-        stmt = (
-            select(PromoCode)
-            .where(PromoCode.is_active.is_(True))
-            .order_by(PromoCode.created_at.desc())
-        )
-        return (await self.session.execute(stmt)).scalars().all()
-
-    async def increment_used(self, promo_id: int) -> None:
-        await self.session.execute(
-            update(PromoCode)
-            .where(PromoCode.id == promo_id)
-            .values(used_count=PromoCode.used_count + 1)
-        )
-
-    async def user_redemption_count(self, promo_id: int, user_id: int) -> int:
-        stmt = select(func.count()).select_from(PromoCodeRedemption).where(
-            PromoCodeRedemption.promo_id == promo_id,
-            PromoCodeRedemption.user_id == user_id,
-        )
-        return int((await self.session.execute(stmt)).scalar_one() or 0)
-
-    async def record_redemption(self, promo_id: int, user_id: int) -> None:
-        self.session.add(
-            PromoCodeRedemption(promo_id=promo_id, user_id=user_id, redeemed_at=datetime.utcnow())
-        )
+        r = await self.session.execute(select(PromoCode).where(PromoCode.code == code.upper()))
+        return r.scalar_one_or_none()
+    async def list_active(self) -> list[PromoCode]:
+        r = await self.session.execute(select(PromoCode).where(PromoCode.is_active == True).order_by(PromoCode.id.desc()))
+        return list(r.scalars().all())
+    async def count_user_redemptions(self, promo_id: int, user_id: int) -> int:
+        r = await self.session.execute(select(func.count(PromoRedemption.id)).where(
+            PromoRedemption.promo_id == promo_id, PromoRedemption.user_id == user_id))
+        return r.scalar_one()
+    async def add_redemption(self, promo_id: int, user_id: int) -> None:
+        self.session.add(PromoRedemption(promo_id=promo_id, user_id=user_id))
         await self.session.flush()
 
-
-class AIHistoryRepository(BaseRepository):  # type: ignore[type-arg]
-    from app.models.ai_history import AIHistory
-    model = AIHistory
-
-    async def last_n(self, chat_id: int, n: int) -> list[AIHistory]:
-        stmt = (
-            select(AIHistory)
-            .where(AIHistory.chat_id == chat_id)
-            .order_by(AIHistory.created_at.desc())
-            .limit(n)
-        )
-        rows = list((await self.session.execute(stmt)).scalars().all())
-        rows.reverse()
-        return rows
+class PromoRedemptionRepository(BaseRepository[PromoRedemption]):
+    model = PromoRedemption
